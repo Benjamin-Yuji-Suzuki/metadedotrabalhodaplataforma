@@ -3,28 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Vídeo Simples (Projeto Acadêmico)</title>
+    <title>Plataforma de Vídeo Simples - Projeto Final</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+    
     <header>
-        <h1>Minha Plataforma de Vídeos</h1>
+        <div class="header-left">
+            <button id="menu-toggle" class="hidden">&#9776;</button>
+            <h1>Minha Plataforma de Vídeos</h1>
+        </div>
         
-        <div class="search-container">
-            <span class="search-icon">&#128269;</span>
-            <input type="search" id="search-bar" placeholder="Pesquisar vídeos..." onkeyup="filterVideos()">
+        <div class="search-and-login">
+            <div class="search-container">
+                <span class="search-icon">&#128269;</span>
+                <input type="search" id="search-bar" placeholder="Pesquisar vídeos..." onkeyup="filterVideos()">
+            </div>
+            
+            <button id="login-button">Login</button>
         </div>
     </header>
 
+    <aside id="sidebar">
+        <nav>
+            <ul>
+                <li id="list-videos-option" onclick="showUserVideos()">Seus Vídeos</li>
+                <li onclick="handleLogout()">Sair</li> 
+                </ul>
+        </nav>
+    </aside>
+
     <main id="video-grid">
         </main>
-
+    
     <div id="video-modal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
             <span class="close" onclick="closeModal(event)">&times;</span>
             <video id="player" controls autoplay></video>
             <h2 id="video-title"></h2>
+        </div>
+    </div>
+
+    <div id="login-modal" class="modal" onclick="closeLoginModal(event)">
+        <div class="modal-content login-content">
+            <span class="close" onclick="closeLoginModal(event)">&times;</span>
+            <h2>Fazer Login</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Usuário (admin)" required>
+                <input type="password" id="password" placeholder="Senha (12345)" required>
+                <button type="submit">Entrar</button>
+                <p id="login-error" class="error-message">Credenciais inválidas.</p>
+            </form>
         </div>
     </div>
 

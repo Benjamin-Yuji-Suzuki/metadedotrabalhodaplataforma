@@ -1,28 +1,40 @@
-/* style.css */
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background-color: #f0f2f5;
+    transition: margin-left 0.3s ease; /* Transição suave para o conteúdo ao abrir a sidebar */
 }
 
 /* HEADER e Barra de Navegação */
 header {
-    background-color: #333; /* Cor escura, padrão de plataformas de vídeo */
+    background-color: #333;
     color: white;
     padding: 15px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-/* BARRA DE PESQUISA */
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.search-and-login {
+    display: flex;
+    align-items: center;
+}
+
+/* ------------------ BARRA DE PESQUISA ------------------ */
 .search-container {
     display: flex;
     align-items: center;
     background-color: white;
-    border-radius: 20px; /* Borda mais arredondada */
+    border-radius: 20px;
     padding: 5px 15px;
     width: 350px;
 }
@@ -41,13 +53,89 @@ header {
     font-size: 16px;
 }
 
-/* GRID DE VÍDEOS (Miniaturas) */
+/* ------------------ BOTÕES E MENU HAMBURGUER ------------------ */
+#login-button {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 15px;
+    transition: background-color 0.2s;
+}
+
+#login-button:hover {
+    background-color: #cc0000;
+}
+
+#menu-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    margin-right: 15px;
+    padding: 0;
+    line-height: 1;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ------------------ SIDEBAR (MENU LATERAL) ------------------ */
+#sidebar {
+    position: fixed;
+    top: 65px; /* Altura do header */
+    left: 0;
+    width: 250px;
+    height: calc(100% - 65px);
+    background-color: #222;
+    color: white;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+    transform: translateX(-100%); /* Oculto inicialmente */
+    transition: transform 0.3s ease;
+    z-index: 99;
+}
+
+#sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar nav li {
+    padding: 15px 25px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+    transition: background-color 0.2s;
+}
+
+#sidebar nav li:hover {
+    background-color: #444;
+}
+
+/* Efeito de abertura da Sidebar */
+.sidebar-open #sidebar {
+    transform: translateX(0);
+}
+
+/* Ajuste do conteúdo principal (vídeos) quando a sidebar está aberta */
+.sidebar-open #video-grid {
+    margin-left: 270px;
+    width: calc(100% - 270px);
+}
+
+/* ------------------ GRID DE VÍDEOS ------------------ */
 #video-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 30px;
     padding: 30px;
     justify-content: flex-start;
+    transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
 .video-card {
@@ -90,11 +178,11 @@ header {
     margin-bottom: 0;
 }
 
-/* MODAL (PLAYER) */
+/* ------------------ MODAIS (VÍDEO E LOGIN) ------------------ */
 .modal {
     display: none; 
     position: fixed;
-    z-index: 1000; /* Garante que fique acima de tudo */
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
@@ -103,26 +191,8 @@ header {
 }
 
 .modal-content {
-    background-color: #1a1a1a; /* Fundo escuro para contraste com o vídeo */
-    margin: 5% auto;
-    padding: 20px;
-    width: 90%;
-    max-width: 1000px;
     position: relative;
     border-radius: 8px;
-}
-
-.modal-content video {
-    width: 100%;
-    height: auto;
-    max-height: 70vh; /* Ocupa no máximo 70% da altura da tela */
-}
-
-.modal-content h2 {
-    color: white;
-    text-align: center;
-    margin: 15px 0 0 0;
-    font-size: 24px;
 }
 
 .close {
@@ -140,4 +210,61 @@ header {
     color: white;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Estilos Específicos do Modal de Vídeo */
+#video-modal .modal-content {
+    background-color: #1a1a1a;
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 1000px;
+}
+
+#video-modal video {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+}
+
+#video-modal h2 {
+    color: white;
+    text-align: center;
+    margin: 15px 0 0 0;
+    font-size: 24px;
+}
+
+/* Estilos Específicos do Modal de Login */
+.login-content {
+    background-color: white;
+    margin: 15% auto;
+    max-width: 400px;
+    padding: 30px;
+    text-align: center;
+}
+
+#login-form input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#login-form button {
+    width: 95%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+    font-weight: bold;
+    display: none; /* Oculto por padrão */
 }
