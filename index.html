@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Vídeo Simples (Projeto Acadêmico)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Minha Plataforma de Vídeos</h1>
+        
+        <div class="search-container">
+            <span class="search-icon">&#128269;</span>
+            <input type="search" id="search-bar" placeholder="Pesquisar vídeos..." onkeyup="filterVideos()">
+        </div>
+    </header>
+
+    <main id="video-grid">
+        </main>
+
+    <div id="video-modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal(event)">&times;</span>
+            <video id="player" controls autoplay></video>
+            <h2 id="video-title"></h2>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

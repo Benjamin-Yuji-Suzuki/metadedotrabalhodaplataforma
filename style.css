@@ -1,0 +1,143 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f0f2f5;
+}
+
+/* HEADER e Barra de Navegação */
+header {
+    background-color: #333; /* Cor escura, padrão de plataformas de vídeo */
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* BARRA DE PESQUISA */
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 20px; /* Borda mais arredondada */
+    padding: 5px 15px;
+    width: 350px;
+}
+
+.search-icon {
+    font-size: 18px;
+    color: #555;
+    margin-right: 10px;
+}
+
+.search-container input {
+    padding: 5px 0;
+    width: 100%;
+    border: none;
+    outline: none; 
+    font-size: 16px;
+}
+
+/* GRID DE VÍDEOS (Miniaturas) */
+#video-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 30px;
+    justify-content: flex-start;
+}
+
+.video-card {
+    width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.video-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.video-card-info {
+    padding: 12px;
+}
+
+.video-card-info h3 {
+    margin-top: 0;
+    font-size: 18px;
+    height: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-card-info p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* MODAL (PLAYER) */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000; /* Garante que fique acima de tudo */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    background-color: #1a1a1a; /* Fundo escuro para contraste com o vídeo */
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 1000px;
+    position: relative;
+    border-radius: 8px;
+}
+
+.modal-content video {
+    width: 100%;
+    height: auto;
+    max-height: 70vh; /* Ocupa no máximo 70% da altura da tela */
+}
+
+.modal-content h2 {
+    color: white;
+    text-align: center;
+    margin: 15px 0 0 0;
+    font-size: 24px;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    font-size: 35px;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.close:hover,
+.close:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
