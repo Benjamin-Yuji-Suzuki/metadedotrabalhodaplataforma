@@ -1,42 +1,33 @@
 // script.js
 
 // --- CONFIGURAÇÃO E DADOS ---
-const CREATOR_ID = 'creator123';
-// Credenciais: Usuário = 'admin', Senha = '12345'
-let isLoggedIn = false;
+const users = [
+    { 
+        id: 'creator123', 
+        username: 'admin', 
+        password: '12345' 
+    },
+    { 
+        id: 'user_joana_456', 
+        username: 'joana', 
+        password: '123' // SENHA ALTERADA AQUI
+    }
+];
+
+let loggedInUser = null; 
+let isConnectionOffline = false;
 
 const videos = [
-    {
-        id: 'v1',
-        title: 'Introdução ao HTML Básico',
-        description: 'Primeiros passos no mundo do HTML.',
-        src: 'videos/intro-html.mp4', 
-        thumbnail: 'thumbnails/thumb-html.jpg', 
-        tags: ['html', 'iniciante', 'web'],
-        creatorId: CREATOR_ID // VÍDEO DO CRIADOR LOGADO
-    },
-    {
-        id: 'v2',
-        title: 'Dicas Essenciais de CSS e Layout Flexbox',
-        description: 'Melhore o visual da sua plataforma com CSS.',
-        src: 'videos/dicas-css.mp4', 
-        thumbnail: 'thumbnails/thumb-css.jpg', 
-        tags: ['css', 'design', 'estilo'],
-        creatorId: 'otheruser' // VÍDEO DE OUTRO USUÁRIO (NÃO APARECERÁ em "Seus Vídeos")
-    },
-    {
-        id: 'v3',
-        title: 'JavaScript: Manipulação Simples do DOM',
-        description: 'Aprenda a dar vida à sua página web com JS.',
-        src: 'videos/js-intro.mp4', 
-        thumbnail: 'thumbnails/thumb-js.jpg', 
-        tags: ['javascript', 'programacao', 'logica'],
-        creatorId: CREATOR_ID // VÍDEO DO CRIADOR LOGADO
-    },
+    { id: 'v1', title: 'Introdução ao HTML Básico', description: 'Primeiros passos no mundo do HTML.', src: 'videos/intro-html.mp4', thumbnail: 'thumbnails/thumb-html.jpg', tags: ['html', 'iniciante', 'web'], creatorId: 'creator123' },
+    { id: 'v2', title: 'Dicas Essenciais de CSS e Layout Flexbox', description: 'Melhore o visual da sua plataforma com CSS.', src: 'videos/dicas-css.mp4', thumbnail: 'thumbnails/thumb-css.jpg', tags: ['css', 'design', 'estilo'], creatorId: 'otheruser' },
+    { id: 'v3', title: 'JavaScript: Manipulação Simples do DOM', description: 'Aprenda a dar vida à sua página web com JS.', src: 'videos/js-intro.mp4', thumbnail: 'thumbnails/thumb-js.jpg', tags: ['javascript', 'programacao', 'logica'], creatorId: 'creator123' },
+    { id: 'v4', title: 'Introdução ao Design Responsivo', description: 'Faça seu site funcionar em qualquer tela.', src: 'videos/responsive-design.mp4', thumbnail: 'thumbnails/thumb-responsive.jpg', tags: ['css', 'responsivo', 'design'], creatorId: 'user_joana_456' }
 ];
 
 // --- REFERÊNCIAS DOM ---
 const videoGrid = document.getElementById('video-grid');
+const offlineMessage = document.getElementById('offline-message');
+const retryButton = document.getElementById('retry-button');
 const videoModal = document.getElementById('video-modal');
 const player = document.getElementById('player');
 const videoTitle = document.getElementById('video-title');
@@ -46,13 +37,37 @@ const loginForm = document.getElementById('login-form');
 const menuToggle = document.getElementById('menu-toggle');
 const body = document.body;
 
-// --- FUNÇÕES GERAIS DE VÍDEOS ---
+// --- LÓGICA DE SIMULAÇÃO DE CONEXÃO ---
+function simulateConnectionError() {
+    console.log("Simulando erro de conexão...");
+    isConnectionOffline = true;
+    body.classList.remove('sidebar-open');
+    fetchAndLoadInitialVideos();
+}
 
+function fetchAndLoadInitialVideos() {
+    videoGrid.innerHTML = '';
+    if (isConnectionOffline) {
+        videoGrid.classList.add('hidden');
+        offlineMessage.classList.remove('hidden');
+    } else {
+        videoGrid.classList.remove('hidden');
+        offlineMessage.classList.add('hidden');
+        loadVideos(videos);
+    }
+}
+
+retryButton.onclick = () => {
+    console.log("Tentando reconectar...");
+    isConnectionOffline = false;
+    fetchAndLoadInitialVideos();
+};
+
+// --- FUNÇÕES GERAIS DE VÍDEOS ---
 function renderVideoCard(video) {
     const card = document.createElement('div');
     card.className = 'video-card';
     card.onclick = () => openVideo(video.id);
-
     card.innerHTML = `
         <img src="${video.thumbnail}" alt="Thumbnail do vídeo: ${video.title}">
         <div class="video-card-info">
@@ -64,15 +79,16 @@ function renderVideoCard(video) {
 }
 
 function loadVideos(videoList) {
+    videoGrid.classList.remove('hidden');
+    offlineMessage.classList.add('hidden');
     videoGrid.innerHTML = ''; 
     if (videoList.length === 0) {
-        videoGrid.innerHTML = '<p style="padding: 20px; font-size: 1.2em;">Nenhum vídeo encontrado. Tente outra busca ou poste um novo conteúdo.</p>';
+        videoGrid.innerHTML = '<p style="padding: 20px; font-size: 1.2em;">Nenhum vídeo encontrado.</p>';
         return;
     }
     videoList.forEach(video => renderVideoCard(video));
 }
 
-// 1. VISUALIZAÇÃO (ABRIR VÍDEO)
 function openVideo(videoId) {
     const video = videos.find(v => v.id === videoId);
     if (video) {
@@ -82,7 +98,6 @@ function openVideo(videoId) {
     }
 }
 
-// 2. VISUALIZAÇÃO (FECHAR VÍDEO)
 function closeModal(event) {
     if (event.target.id === 'video-modal' || event.target.className === 'close') {
         player.pause(); 
@@ -91,30 +106,23 @@ function closeModal(event) {
     }
 }
 
-// 3. PESQUISA (FILTRO)
 function filterVideos() {
+    if (isConnectionOffline) return;
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
-    
-    // Se o usuário estiver na view "Seus Vídeos", filtra APENAS nessa lista
-    const listToFilter = body.classList.contains('user-view') 
-        ? videos.filter(v => v.creatorId === CREATOR_ID) 
+    const listToFilter = body.classList.contains('user-view') && loggedInUser 
+        ? videos.filter(v => v.creatorId === loggedInUser.id) 
         : videos;
-
-    const filteredList = listToFilter.filter(video => {
-        const titleMatch = video.title.toLowerCase().includes(searchTerm);
-        const descriptionMatch = video.description.toLowerCase().includes(searchTerm);
-        const tagsMatch = video.tags.some(tag => tag.toLowerCase().includes(searchTerm));
-
-        return titleMatch || descriptionMatch || tagsMatch;
-    });
-
+    const filteredList = listToFilter.filter(video => 
+        video.title.toLowerCase().includes(searchTerm) || 
+        video.description.toLowerCase().includes(searchTerm) || 
+        video.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+    );
     loadVideos(filteredList);
 }
 
 // --- FUNÇÕES DE LOGIN/LOGOUT E INTERFACE ---
-
 loginButton.onclick = () => {
-    if (!isLoggedIn) {
+    if (!loggedInUser) {
         loginModal.style.display = 'block';
     } else {
         handleLogout();
@@ -133,68 +141,49 @@ loginForm.onsubmit = (e) => {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const errorMessage = document.getElementById('login-error');
-
-    // SIMULAÇÃO DE LOGIN: admin/12345
-    if (username === 'admin' && password === '12345') {
-        handleLoginSuccess();
+    const foundUser = users.find(user => user.username === username && user.password === password);
+    if (foundUser) {
+        handleLoginSuccess(foundUser);
     } else {
         errorMessage.style.display = 'block';
     }
 };
 
-function handleLoginSuccess() {
-    isLoggedIn = true;
+function handleLoginSuccess(user) {
+    loggedInUser = user; 
     loginModal.style.display = 'none';
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
-
-    // Atualiza a interface
     loginButton.textContent = 'Logout';
-    menuToggle.classList.remove('hidden'); // Mostra o ícone de menu
-    body.classList.remove('user-view'); // Garante que a view inicial é a de todos
-    
-    // Re-carrega a grade para o estado inicial
-    loadVideos(videos); 
+    menuToggle.classList.remove('hidden'); 
+    body.classList.remove('user-view'); 
+    fetchAndLoadInitialVideos(); 
 }
 
 function handleLogout() {
-    isLoggedIn = false;
-    
-    // Atualiza a interface
+    loggedInUser = null; 
     loginButton.textContent = 'Login';
-    menuToggle.classList.add('hidden'); // Oculta o ícone de menu
-    body.classList.remove('sidebar-open'); // Fecha a sidebar
-    body.classList.remove('user-view'); // Sai da view de usuário
-    
-    // Re-carrega a grade para mostrar todos os vídeos
-    loadVideos(videos);
+    menuToggle.classList.add('hidden'); 
+    body.classList.remove('sidebar-open'); 
+    body.classList.remove('user-view'); 
+    fetchAndLoadInitialVideos();
 }
 
 // --- FUNÇÕES DA SIDEBAR ---
-
-// Toggle da Sidebar (mostrar/esconder)
 menuToggle.onclick = () => {
     body.classList.toggle('sidebar-open');
 };
 
-// 4. LISTAR VÍDEOS (SEUS VÍDEOS)
 function showUserVideos() {
-    if (!isLoggedIn) return; 
-
-    body.classList.remove('sidebar-open'); // Fecha a sidebar
-    body.classList.add('user-view'); // Define a view atual como 'user'
-    
-    // FILTRA APENAS os vídeos criados pelo usuário logado
-    const userVideos = videos.filter(v => v.creatorId === CREATOR_ID);
-    
-    // Atualiza a grade com a lista filtrada
+    if (!loggedInUser || isConnectionOffline) return;
+    body.classList.remove('sidebar-open'); 
+    body.classList.add('user-view'); 
+    const userVideos = videos.filter(v => v.creatorId === loggedInUser.id);
     loadVideos(userVideos);
-    
-    // Limpa a barra de pesquisa para evitar conflito de filtro
     document.getElementById('search-bar').value = '';
 }
 
-// Inicializa a plataforma
+// --- INICIALIZAÇÃO DA PLATAFORMA ---
 document.addEventListener('DOMContentLoaded', () => {
-    loadVideos(videos);
+    fetchAndLoadInitialVideos();
 });

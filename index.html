@@ -28,13 +28,22 @@
         <nav>
             <ul>
                 <li id="list-videos-option" onclick="showUserVideos()">Seus Vídeos</li>
+                <li onclick="simulateConnectionError()">Simular Falha de Conexão</li>
                 <li onclick="handleLogout()">Sair</li> 
-                </ul>
+            </ul>
         </nav>
     </aside>
 
-    <main id="video-grid">
-        </main>
+    <main>
+        <div id="offline-message" class="hidden">
+            <h2>&#128279; Sem conexão com a internet</h2>
+            <p>Não foi possível carregar os vídeos. Verifique sua conexão e tente novamente.</p>
+            <button id="retry-button">Tentar Novamente</button>
+        </div>
+
+        <div id="video-grid">
+            </div>
+    </main>
     
     <div id="video-modal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
@@ -49,10 +58,10 @@
             <span class="close" onclick="closeLoginModal(event)">&times;</span>
             <h2>Fazer Login</h2>
             <form id="login-form">
-                <input type="text" id="username" placeholder="Usuário (admin)" required>
-                <input type="password" id="password" placeholder="Senha (12345)" required>
+                <input type="text" id="username" placeholder="Usuário" required>
+                <input type="password" id="password" placeholder="Senha" required>
                 <button type="submit">Entrar</button>
-                <p id="login-error" class="error-message">Credenciais inválidas.</p>
+                <p id="login-error" class="hidden">Usuário ou senha inválidos.</p>
             </form>
         </div>
     </div>

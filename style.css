@@ -1,8 +1,13 @@
+/* Estilos Gerais */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background-color: #f0f2f5;
     transition: margin-left 0.3s ease; /* Transição suave para o conteúdo ao abrir a sidebar */
+}
+
+.hidden {
+    display: none !important;
 }
 
 /* HEADER e Barra de Navegação */
@@ -24,12 +29,21 @@ header {
     align-items: center;
 }
 
+#menu-toggle {
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
 .search-and-login {
     display: flex;
     align-items: center;
 }
 
-/* ------------------ BARRA DE PESQUISA ------------------ */
+/* Barra de Pesquisa */
 .search-container {
     display: flex;
     align-items: center;
@@ -45,104 +59,83 @@ header {
     margin-right: 10px;
 }
 
-.search-container input {
-    padding: 5px 0;
-    width: 100%;
+#search-bar {
     border: none;
-    outline: none; 
+    outline: none;
+    width: 100%;
     font-size: 16px;
 }
 
-/* ------------------ BOTÕES E MENU HAMBURGUER ------------------ */
+/* Botão de Login */
 #login-button {
-    background-color: #ff0000;
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    margin-left: 15px;
+    margin-left: 20px;
     transition: background-color 0.2s;
 }
 
 #login-button:hover {
-    background-color: #cc0000;
+    background-color: #0056b3;
 }
 
-#menu-toggle {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
-    margin-right: 15px;
-    padding: 0;
-    line-height: 1;
-}
-
-.hidden {
-    display: none !important;
-}
-
-/* ------------------ SIDEBAR (MENU LATERAL) ------------------ */
+/* SIDEBAR (Menu Lateral) */
 #sidebar {
-    position: fixed;
-    top: 65px; /* Altura do header */
-    left: 0;
+    height: 100%;
     width: 250px;
-    height: calc(100% - 65px);
-    background-color: #222;
-    color: white;
-    padding: 20px 0;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-    transform: translateX(-100%); /* Oculto inicialmente */
-    transition: transform 0.3s ease;
+    position: fixed;
     z-index: 99;
+    top: 0;
+    left: -250px; /* Escondido por padrão */
+    background-color: #2a2a2a;
+    padding-top: 80px; /* Espaço para o header */
+    transition: left 0.3s ease;
 }
 
-#sidebar nav ul {
-    list-style: none;
+#sidebar ul {
+    list-style-type: none;
     padding: 0;
 }
 
-#sidebar nav li {
-    padding: 15px 25px;
+#sidebar li {
+    padding: 15px 20px;
+    color: #f1f1f1;
     cursor: pointer;
-    border-bottom: 1px solid #333;
     transition: background-color 0.2s;
 }
 
-#sidebar nav li:hover {
-    background-color: #444;
+#sidebar li:hover {
+    background-color: #575757;
 }
 
-/* Efeito de abertura da Sidebar */
-.sidebar-open #sidebar {
-    transform: translateX(0);
+/* Classe para mostrar a sidebar e empurrar o conteúdo */
+body.sidebar-open #sidebar {
+    left: 0;
 }
 
-/* Ajuste do conteúdo principal (vídeos) quando a sidebar está aberta */
-.sidebar-open #video-grid {
-    margin-left: 270px;
-    width: calc(100% - 270px);
+body.sidebar-open {
+    margin-left: 250px;
 }
 
-/* ------------------ GRID DE VÍDEOS ------------------ */
+/* Conteúdo Principal (Grid de Vídeos) */
+main {
+    padding: 20px;
+}
+
 #video-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    padding: 30px;
-    justify-content: flex-start;
-    transition: margin-left 0.3s ease, width 0.3s ease;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 }
 
 .video-card {
-    width: 300px;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     cursor: pointer;
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -150,7 +143,7 @@ header {
 
 .video-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .video-card img {
@@ -160,34 +153,31 @@ header {
 }
 
 .video-card-info {
-    padding: 12px;
+    padding: 15px;
 }
 
 .video-card-info h3 {
-    margin-top: 0;
-    font-size: 18px;
-    height: 25px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
 }
 
 .video-card-info p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 0;
+    margin: 0;
+    color: #555;
+    font-size: 0.9em;
 }
 
-/* ------------------ MODAIS (VÍDEO E LOGIN) ------------------ */
+/* Estilos Gerais do MODAL */
 .modal {
-    display: none; 
+    display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 101;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.9);
+    overflow: auto;
 }
 
 .modal-content {
@@ -212,7 +202,7 @@ header {
     cursor: pointer;
 }
 
-/* Estilos Específicos do Modal de Vídeo */
+/* Modal de Vídeo */
 #video-modal .modal-content {
     background-color: #1a1a1a;
     margin: 5% auto;
@@ -231,40 +221,77 @@ header {
     color: white;
     text-align: center;
     margin: 15px 0 0 0;
-    font-size: 24px;
+    font-size: 2em;
 }
 
-/* Estilos Específicos do Modal de Login */
-.login-content {
-    background-color: white;
+/* Modal de Login */
+#login-modal .login-content {
+    background-color: #fff;
     margin: 15% auto;
-    max-width: 400px;
     padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
     text-align: center;
 }
 
 #login-form input {
-    width: 90%;
-    padding: 10px;
-    margin-bottom: 15px;
+    width: calc(100% - 20px);
+    padding: 12px;
+    margin: 10px 0;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 #login-form button {
-    width: 95%;
+    width: 100%;
+    padding: 12px;
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 12px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1em;
 }
 
-.error-message {
+#login-error {
     color: red;
     margin-top: 10px;
-    font-weight: bold;
-    display: none; /* Oculto por padrão */
+}
+
+/* Estilos para a mensagem de offline/erro */
+#offline-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px;
+    color: #555;
+    height: calc(100vh - 200px); /* Ajusta a altura para preencher a tela */
+}
+
+#offline-message h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+#offline-message p {
+    font-size: 1.2em;
+    margin-bottom: 25px;
+}
+
+#retry-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#retry-button:hover {
+    background-color: #0056b3;
 }
