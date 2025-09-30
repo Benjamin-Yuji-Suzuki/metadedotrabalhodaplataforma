@@ -10,7 +10,7 @@
     
     <header>
         <div class="header-left">
-            <button id="menu-toggle" class="hidden">&#9776;</button>
+            <button id="menu-toggle">&#9776;</button>
             <h1>Minha Plataforma de Vídeos</h1>
         </div>
         
@@ -58,6 +58,9 @@
             <span class="close" onclick="closeLoginModal(event)">&times;</span>
             <h2>Fazer Login</h2>
             <form id="login-form">
+                <p id="access-required-message" class="hidden" style="color: #007bff; font-weight: bold; margin-bottom: 10px;">
+                    Para ver seus vídeos, você precisa estar logado!
+                </p>
                 <input type="text" id="username" placeholder="Usuário" required>
                 <input type="password" id="password" placeholder="Senha" required>
                 <button type="submit">Entrar</button>
