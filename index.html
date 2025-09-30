@@ -48,7 +48,17 @@
     <div id="video-modal" class="modal" onclick="closeModal(event)">
         <div class="modal-content">
             <span class="close" onclick="closeModal(event)">&times;</span>
-            <video id="player" controls autoplay></video>
+            
+            <div id="player-container">
+                <video id="player" controls autoplay></video>
+            </div>
+
+            <div id="restriction-message" class="hidden">
+                <h2>Conteúdo Restrito: Assinatura Necessária</h2>
+                <p>Este vídeo faz parte do nosso conteúdo premium. Faça upgrade da sua assinatura para ter acesso imediato e ilimitado.</p>
+                <button id="upgrade-button" onclick="alert('Simulando redirecionamento para a página de assinatura!')">Ver Detalhes da Assinatura</button>
+            </div>
+            
             <h2 id="video-title"></h2>
         </div>
     </div>

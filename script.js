@@ -21,7 +21,8 @@ const videos = [
     { id: 'v1', title: 'Introdução ao HTML Básico', description: 'Primeiros passos no mundo do HTML.', src: 'videos/intro-html.mp4', thumbnail: 'thumbnails/thumb-html.jpg', tags: ['html', 'iniciante', 'web'], creatorId: 'creator123' },
     { id: 'v2', title: 'Dicas Essenciais de CSS e Layout Flexbox', description: 'Melhore o visual da sua plataforma com CSS.', src: 'videos/dicas-css.mp4', thumbnail: 'thumbnails/thumb-css.jpg', tags: ['css', 'design', 'estilo'], creatorId: 'otheruser' },
     { id: 'v3', title: 'JavaScript: Manipulação Simples do DOM', description: 'Aprenda a dar vida à sua página web com JS.', src: 'videos/js-intro.mp4', thumbnail: 'thumbnails/thumb-js.jpg', tags: ['javascript', 'programacao', 'logica'], creatorId: 'creator123' },
-    { id: 'v4', title: 'Introdução ao Design Responsivo', description: 'Faça seu site funcionar em qualquer tela.', src: 'videos/responsive-design.mp4', thumbnail: 'thumbnails/thumb-responsive.jpg', tags: ['css', 'responsivo', 'design'], creatorId: 'user_joana_456' }
+    // VÍDEO MARACADO COMO RESTRITO PARA TESTE DO CENÁRIO DE FALHA (CA-F2.1)
+    { id: 'v4', title: 'Introdução ao Design Responsivo', description: 'Faça seu site funcionar em qualquer tela.', src: 'videos/responsive-design.mp4', thumbnail: 'thumbnails/thumb-responsive.jpg', tags: ['css', 'responsivo', 'design'], creatorId: 'user_joana_456', isRestricted: true } 
 ];
 
 // --- REFERÊNCIAS DOM ---
@@ -37,6 +38,10 @@ const loginForm = document.getElementById('login-form');
 const menuToggle = document.getElementById('menu-toggle');
 const body = document.body;
 const accessRequiredMessage = document.getElementById('access-required-message');
+
+// NOVAS REFERÊNCIAS PARA A MODAL DE VÍDEO
+const playerContainer = document.getElementById('player-container');
+const restrictionMessage = document.getElementById('restriction-message');
 
 // --- LÓGICA DE SIMULAÇÃO DE CONEXÃO ---
 function simulateConnectionError() {
@@ -72,7 +77,7 @@ function renderVideoCard(video) {
     card.innerHTML = `
         <img src="${video.thumbnail}" alt="Thumbnail do vídeo: ${video.title}">
         <div class="video-card-info">
-            <h3>${video.title}</h3>
+            <h3>${video.title} ${video.isRestricted ? ' (Restrito)' : ''}</h3>
             <p title="${video.description}">${video.description.substring(0, 50)}...</p>
         </div>
     `;
@@ -84,7 +89,7 @@ function loadVideos(videoList) {
     offlineMessage.classList.add('hidden');
     videoGrid.innerHTML = ''; 
     if (videoList.length === 0) {
-        // Cenário de Falha do Usuário (Lista Vazia) - Original
+        // Cenário de Falha do Usuário (Lista Vazia)
         if (loggedInUser && body.classList.contains('user-view')) {
             videoGrid.innerHTML = `
                 <div style="padding: 20px; text-align: center;">
@@ -107,9 +112,25 @@ function loadVideos(videoList) {
 function openVideo(videoId) {
     const video = videos.find(v => v.id === videoId);
     if (video) {
-        player.src = video.src;
-        videoTitle.textContent = video.title;
+        videoTitle.textContent = video.title; 
         videoModal.style.display = 'block';
+
+        if (video.isRestricted) {
+            // --- IMPLEMENTAÇÃO DO CENÁRIO DE FALHA: VÍDEO RESTRITO ---
+            
+            // CA-F2.1: Bloqueio da Reprodução
+            player.src = ''; 
+            playerContainer.classList.add('hidden');
+            
+            // CA-F2.2 & CA-F2.3: Mensagem e Ação
+            restrictionMessage.classList.remove('hidden');
+            
+        } else {
+            // CENÁRIO DE SUCESSO
+            player.src = video.src;
+            playerContainer.classList.remove('hidden');
+            restrictionMessage.classList.add('hidden');
+        }
     }
 }
 
@@ -118,6 +139,11 @@ function closeModal(event) {
         player.pause(); 
         player.src = ''; 
         videoModal.style.display = 'none';
+        
+        // Garante que o estado seja resetado
+        if (restrictionMessage) {
+             restrictionMessage.classList.add('hidden');
+        }
     }
 }
 
@@ -140,7 +166,7 @@ loginButton.onclick = () => {
     if (!loggedInUser) {
         loginModal.style.display = 'block';
         if (accessRequiredMessage) {
-             accessRequiredMessage.classList.add('hidden'); // Oculta a mensagem se o acesso for direto pelo botão Login
+             accessRequiredMessage.classList.add('hidden'); 
         }
     } else {
         handleLogout();
@@ -177,7 +203,6 @@ function handleLoginSuccess(user) {
     document.getElementById('username').value = '';
     document.getElementById('password').value = '';
     loginButton.textContent = 'Logout';
-    // CORRIGIDO: Não alterar a visibilidade do menu
     body.classList.remove('user-view'); 
     fetchAndLoadInitialVideos(); 
     
@@ -189,7 +214,6 @@ function handleLoginSuccess(user) {
 function handleLogout() {
     loggedInUser = null; 
     loginButton.textContent = 'Login';
-    // CORRIGIDO: Não alterar a visibilidade do menu
     body.classList.remove('sidebar-open'); 
     body.classList.remove('user-view'); 
     fetchAndLoadInitialVideos();
@@ -204,12 +228,8 @@ function showUserVideos() {
     if (isConnectionOffline) return;
 
     if (!loggedInUser) {
-        // CENÁRIO DE FALHA DE INTERAÇÃO (ACESSO NEGADO)
-        
-        // 1. Abre a modal de login
+        // Cenário de Falha de Interação (Acesso Negado)
         loginModal.style.display = 'block';
-
-        // 2. Exibe a mensagem de acesso negado
         if (accessRequiredMessage) {
             accessRequiredMessage.classList.remove('hidden');
         }
@@ -222,13 +242,11 @@ function showUserVideos() {
     body.classList.remove('sidebar-open'); 
     body.classList.add('user-view'); 
     const userVideos = videos.filter(v => v.creatorId === loggedInUser.id);
-    loadVideos(userVideos); // Esta função agora lida com o Cenário de Falha de Lista Vazia (Empty State)
+    loadVideos(userVideos);
     document.getElementById('search-bar').value = '';
 }
 
 // --- INICIALIZAÇÃO DA PLATAFORMA ---
 document.addEventListener('DOMContentLoaded', () => {
-    // CORRIGIDO: Garantir que o menu esteja sempre visível ao carregar
-    // if (!loggedInUser) { menuToggle.classList.add('hidden'); } // Linha removida/corrigida
     fetchAndLoadInitialVideos();
 });
